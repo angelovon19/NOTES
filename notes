@@ -1,0 +1,232 @@
+Review:
+10.0.0.0/8 skyes will have a small call center:
+1800 agents, TLs
+Convert: 11 bits
+Subtract: /21 
+Ipasok: (3rd octet, 8i)
+Network: 10.0.8.0/21
+Panganay: 10.0.8.1
+Last usable: 10.0.15.254
+Bunso: 10.0.15.255
+NotYours: 10.0.16.0/21
+
+---------------------------------------------------------------
+
+BITS:
+1 bits - 1
+2 bits - 2
+3 bits - 4
+4 bits - 8
+5 bits - 16
+6 bits - 32
+7 bits - 64
+8 bits - 128
+9 bits - 256
+10 bits - 512
+11 bits - 1024
+12 bits - 2048
+13 bits - 4096
+14 bits - 8192
+15 bits - 16384
+16 bits - 32768
+
+---------------------------------------------------------------
+
+IPV6:
+8i4th	4i2nd	2i3rd	4i2nd	1i4th	4i4th
+0000	0000	0000	0000	0000	0000
+0008	0400	0020	0400	0001	0004
+0010	0800	0040	0800	0002	0008	
+0018	0c00	0060	0c00	0003	000c
+0020	1000	0080	1000	0004	0010
+0028	1400	00a0	1400	0005	0014
+0030	1800	00c0	1800	0006 	0018
+0038	1c00	00e0	1c00	0007	001c
+0040	2000	0100	2000	0008	0020
+
+15 - 1111f
+14 - 1110e
+13 - 1101d
+12 - 1100c
+11 - 1011b
+10 - 1010a
+9 - 1001
+8 - 1000
+7 - 0111
+6 - 0110
+5 - 0101
+4 - 0100
+3 - 0011
+2 - 0010
+1 - 0001
+0 - 0000
+
+TASK2: subnet 2001:fd8:2f2::/48 into 32 offices
+RivanSolution: CAI: Convert, Add, Ifingermo
+convert to 2r_: 32 = 2r_5
+add: /48 + /5 = /53, (8i, 2nd):
+Ifingermo: 
+2001:fd8:2f2:0000::/53
+2001:fd8:2f2:0800::/53
+2001:fd8:2f2:1000::/53
+2001:fd8:2f2:1800::/53
+2001:fd8:2f2:2000::/53
+2001:fd8:2f2:2800::/53
+2001:fd8:2f2:3000::/53
+2001:fd8:2f2:3800::/53
+2001:fd8:2f2:4000::/53
+
+TASK3: subnet pldt: 2001:4455:9299::/48 into 1024 offices:
+Convert to 2r_: 1024 = 2r_10
+add: /48 + /10 = /58, (4i, 3rd)
+Ifingermo:
+2001:4455:9299:0000::/58
+2001:4455:9299:0040::/58
+2001:4455:9299:0080::/58
+2001:4455:9299:00c0::/58
+2001:4455:9299:0100::/58
+2001:4455:9299:0140::/58
+2001:4455:9299:0180::/58
+2001:4455:9299:01c0::/58
+2001:4455:9299:0200::/58
+
+TASK4: subnet: 2001:fd8:750::/48 subnet into 64 offices:
+Convert to 2r_: 64 = 2r_6
+add: /48 + /6 = /54 = (4i, 2nd)
+Ifingermo:
+2001:fd8:750:0000::/54
+2001:fd8:750:0400::/54
+2001:fd8:750:0800::/54
+2001:fd8:750:0c00::/54
+2001:fd8:750:1000::/54
+2001:fd8:750:1400::/54
+2001:fd8:750:1800::/54
+2001:fd8:750:1c00::/54
+2001:fd8:750:2000::/54
+
+---------------------------------------------------------------
+
+3 RULES OF ROUTING
+   1. PING DIKIT ALWAYS = if not pingable (physical error or wrong ip address)
+   2. ROUTE NOT DIKIT = 
+	route add 10.10.1.0 mask 255.255.255.0 10.3.3.1
+   3. REMEMBER RULE 1 AND 2
+
+5 WAYS TO ROUTE
+- STATIC ROUTE - endpoint
+- EIGRP - cisco brand
+- OSPF - different brands
+- BGP - 2 or more telco
+- VPN
+
+---------------------------------------------------------------
+
+STATIC ROUTE
+
+R3:
+sh ip int brief | ex una
+show ip router connected = kalye/network
+show ip router connected | inc c
+
+10.1.1.4/30
+10.1.1.8/30
+172.16.50.5/20
+192.168.1.100/27
+
+staticRoute:
+ip route 10.1.1.4 255.255.255.252 null 0
+ip route 10.1.1.8 255.255.255.252 null 0
+ip route 172.16.48.5 255.255.240.0 null 0
+ip route 192.168.1.96 255.255.255.224 null 0
+
+---------------------------------------------------------------
+
+QUESTION IN JOB INTERVIEW:
+
+3.1 Interpret the components of routing table:
+a routing is database/fib: forward information base that is used by routing devices, path to take.
+to go to remote networks:
+linux: netstat -rn  or  ip route
+windows: route print
+cisco: show ip route
+
+3.1.a Routing protocol code: exclusive on Cisco,Juniper,Fortinet,Palo Alto
+Mr.Bodds = Mpls, Rip, Bgp, Ospf, D(eigrp),Default, StaticRouting
+admin distances:
+rip - 120, 
+ebgp -20,
+ibgp - 200, 
+ospf - 110, 
+eigrp -90, 
+stat,def: 1
+
+---------------------------------------------------------------
+
+EIRGP
+
+10.1.1.4/30
+172.16.50.5/20
+192.168.1.100/27
+
+router eigrp 100
+network 10.1.1.4 0.0.0.3
+network 172.16.48.0 0.0.15.255
+network 192.168.1.96 0.0.0.31
+
+---------------------------------------------------------------
+
+OSPF
+
+10.1.1.4/30
+172.16.50.5/20
+192.168.1.100/27
+
+router ospf 1
+network 10.1.1.4 0.0.0.3 area 0
+network 172.16.48.0 0.0.15.255 area 0
+network 192.168.1.96 0.0.0.31 area 0
+
+---------------------------------------------------------------
+
+!HOW TO CHECK IF EIGRP IS WORKING PROPERLY:
+SIR: show ip protocols
+SIEN: show ip EIGRP neighbors --> super, meron kapitbahay
+SIET: show ip eigrp topology --> super, madami ang P, P lahat
+show ip eigrp traffic
+show ip route eigrp
+
+---------------------------------------------------------------
+
+OSPF HEADER
+
+ROUTER ID
+AREA ID
+SUBNET MASK
+AUTHENTICATION TYPE
+
+HELLO TIME: 10 secs
+DEAD INTERVAL: 40 secs
+
+BACKUP DESIGNATED ROUTER
+DESIGNATED ROUTER
+
+!HOW TO CHECK IF OSPF IS WORKING PROPERLY:
+SIP: sh ip protocols
+SION: sh ip ospf neighbor
+SIOD: sh ip ospf database
+SIRO: sh ip route ospf
+
+---------------------------------------------------------------
+
+R1:
+config t
+router bgp 1
+bgp router-id 1.1.1.1
+neighbor 209.9.9.3 remote-as 3
+neighbor 207.7.7.2 remote-as 2
+neighbor 208.8.8.4 remote-as 45
+network 209.9.9.0 Mask 255.255.255.0
+network 207.7.7.0 Mask 255.255.255.0
+network 208.8.8.0 Mask 255.255.255.0
+network 10.1.1.0 Mask 255.255.255.0
+end
