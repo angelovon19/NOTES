@@ -1,0 +1,263 @@
+DAY 4
+
+/21 = 255.255.248.0 = (3rd,8i) = 0.0.7.255
+/27 =  = 255.255.255.224 = (4th,32i) = 0.0.0.31
+/29 =  = 255.255.255.248 = (4th,8i) = 0.0.0.7
+/30 =  = 255.255.255.252 = (4th,4i) = 0.0.0.3
+
+---------------------------------------------------
+
+open ssh for remote admin:
+sudo su
+systemctl enable ssh
+
+scan for all IP address of victims:
+nmap -sP 10.k.1.0/24
+
+tcp.flags.syn == 1
+
+---------------------------------------------------
+
+netstat -ano
+
+HACKERS: ATTACK 139 and 445:
+initial access: 
+net use \\10.k.1.10\ipc$
+privilegeuse:
+net use x: /delete
+net use x: \\10.k.1.10\c$
+
+PROTOCOL -> HACKER -> VICTIM -> PORT
+
+---------------------------------------------------
+
+KALI LINUX 
+
+admin 
+pass
+sudo su
+apt install openssh-server
+systemctl enable ssh
+systemctl start ssh
+systemctl status ssh
+ip addr
+
+---------------------------------------------------
+
+BLOCK PORN:
+config t
+NO ip access-list standard NOPORN
+ip access-list standard NOPORN
+DENY 66.254.0.0 0.0.255.255
+deny 161.49.0.0 0.0.255.255
+DENY 104.21.0.0 0.0.255.255
+DENY 68.235.0.0 0.0.255.255
+DENY 104.17.0.0 0.0.255.255
+DENY 88.208.0.0 0.0.255.255
+DENY 208.77.0.0 0.0.255.255
+DENY 172.67.0.0 0.0.255.255
+deny 162.159.0.0 0.0.255.255
+Permit Any
+Int Gi 1
+ ip access-group NOPORN in
+end
+
+BLOCK RUSSIAN ADDRESS:
+config t
+NO ip access-list standard NORUSSIA
+ip access-list standard NORUSSIA
+DENY 100.0.0.0 0.255.255.255
+DENY 101.0.0.0 0.255.255.255
+DENY 102.0.0.0 0.255.255.255
+DENY 103.0.0.0 0.255.255.255
+DENY 109.0.0.0 0.255.255.255
+Permit Any
+Int Gi 1
+ ip access-group NORUSSIA in
+end
+
+BLOCK SCHOOL:
+config t
+NO ip access-list standard NOISKUL 
+ip access-list standard NOISKUL 
+DENY 172.0.0.0 0.255.255.255 or 172.67.0.0 0.0.255.255
+DENY 50.0.0.0 0.255.255.255 or 50.6.0.0 0.0.255.255
+DENY 184.0.0.0 0.255.255.255 or 184.168.0.0 0.0.255.255
+DENY 155.0.0.0 0.255.255.255 or 155.137.0.0 0.0.255.255
+DENY 74.0.0.0 0.255.255.255 or 74.91.0.0 0.0.255.255
+Permit Any
+Int Gi 1
+ ip access-group NOISKUL in
+end
+
+BLOCK TORRENT:
+config t
+NO ip access-list standard NOTORS
+ip access-list standard NOTORS
+DENY   162.159.0.0 0.0.255.255
+DENY   104.21.0.0 0.0.255.255
+DENY   172.67.0.0 0.0.255.255
+DENY   84.32.0.0 0.0.255.255
+DENY   76.223.0.0 0.0.255.255
+DENY   13.248.0.0 0.0.255.255
+DENY   104.21.0.0 0.0.255.255
+DENY   104.26.0.0 0.0.255.255
+DENY   95.211.0.0 0.0.255.255
+Permit Any
+Int Gi 1
+ ip access-group NOTORS in
+end
+
+
+ctrl + shift + 6 (bitaw) x
+
+---------------------------------------------------
+
+FIREWALL POLICY
+PORT     STATE SERVICE
+7/tcp    open  echo
+9/tcp    open  discard
+13/tcp   open  daytime
+19/tcp   open  chargen
+22/tcp   open  ssh
+23/tcp   open  telnet
+53/tcp   open  domain
+79/tcp   open  finger
+80/tcp   open  http
+443/tcp  open  https
+1720/tcp open  h323q931
+2000/tcp open  cisco-sccp
+5060/tcp open  sip
+5061/tcp open  sip-tls
+
+22/tcp   open     ssh
+25/tcp   filtered smtp
+26/tcp   open     rsftp
+53/tcp   open     domain
+80/tcp   open     http
+110/tcp  open     pop3
+111/tcp  open     rpcbind
+143/tcp  open     imap
+443/tcp  open     https
+465/tcp  open     smtps
+587/tcp  open     submission
+993/tcp  open     imaps
+995/tcp  open     pop3s
+2000/tcp open     cisco-sccp
+3306/tcp open     mysql
+5060/tcp open     sip
+5221/tcp filtered 3exmp
+
+config t
+NO IP access-list Extended NGFW1
+IP access-list Extended NGFW1
+ Permit tcp Any host bet10.com eq 80 log
+ Permit tcp Any host bet10.com eq 443 log
+ Permit icmp Any host bet10.com log
+ Permit tcp Any host bet11.com eq 53 log
+ Permit tcp Any host bet11.com eq 443 log
+ Permit tcp Any host bet11.com eq 22 log
+ Int Gi 3
+  ip access-group NGFW1 in
+REMOVE FIREWALL:
+config t
+ Int Gi 3
+  NO ip access-group NGFW1 in
+end
+
+EXAMPLE 2: make NGFW2
+MODIFY:
+bet10.com (open: dns, ssh)
+bet11.com (open: https, http)
+ANSWER:
+config t
+NO IP access-list Extended NGFW2
+IP access-list Extended NGFW2
+ Permit tcp Any host bet10.com eq 53 log
+ Permit tcp Any host bet10.com eq 22 log
+ Permit tcp Any host bet11.com eq 80 log
+ Permit tcp Any host bet11.com eq 443 log
+ Int Gi 3
+  ip access-group NGFW2 in
+
+config t
+ Int Gi 3
+  NO ip access-group NGFW2 in
+end
+
+EXAMPLE 3: make NGFW3
+MODIFY:
+allow only sccp, sip, h323 on bet10.com because its a VIOPgw
+allow only ssh, dns, http, https on bet11.com because its a WEBs
+ANSWER:
+config t
+NO IP access-list Extended NGFW3
+IP access-list Extended NGFW3
+ Permit tcp Any host bet10.com eq 2000 log
+ Permit tcp Any host bet10.com eq 5060 log
+ Permit tcp Any host bet10.com eq 1720 log
+ Permit tcp Any host bet11.com eq 22 log
+ Permit tcp Any host bet11.com eq 53 log
+ Permit tcp Any host bet11.com eq 80 log
+ Permit tcp Any host bet11.com eq 443 log
+ Int Gi 3
+  ip access-group NGFW3 in
+
+config t
+ Int Gi 3
+  NO ip access-group NGFW3 in
+end
+
+EXAMPLE 4: make NGFW4
+MODIFY:
+allow only https on bet10.com
+allow only https on bet11.com
+ANSWER:
+config t
+NO IP access-list Extended NGFW4
+IP access-list Extended NGFW4
+ Permit tcp Any host bet10.com eq 443 log
+ Permit tcp Any host bet11.com eq 443 log
+ Int Gi 3
+  ip access-group NGFW4 in
+
+config t
+ Int Gi 3
+  NO ip access-group NGFW4 in
+end
+
+EXAMPLE 5: make NGFW5
+MODIFY:
+allow only telnet, ssh, http on bet10.com
+allow only  ssh, https on bet11.com
+ANSWER:
+config t
+NO IP access-list Extended NGFW5
+IP access-list Extended NGFW5
+ Permit tcp Any host bet10.com eq 23 log
+ Permit tcp Any host bet10.com eq 22 log
+ Permit tcp Any host bet10.com eq 80 log
+ Permit tcp Any host bet11.com eq 22 log
+ Permit tcp Any host bet11.com eq 443 log
+ Int Gi 3
+  ip access-group NGFW5 in
+
+config t
+ Int Gi 3
+  NO ip access-group NGFW5 in
+end
+
+---------------------------------------------------
+
+import cli
+
+cmd2 = '''hostname MATCHALATE
+int loop 7
+ip add 7.7.7.7 255.255.255.255
+int loop 8
+ip add 8.8.8.8 255.255.255.255
+int loop 9
+ip add 9.9.9.9 255.255.255.255
+end
+'''
+cli.configurep(cmd2)
