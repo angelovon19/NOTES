@@ -1,0 +1,43 @@
+DAY 5 - SWITCHING
+
+CISCO SWITCHING PROTOCOLS
+- 802.1q - trunking (switch to switch)
+- 802.1d - spanning tree protocol (stp)
+- 802.1w - rapid spanning tree protocol (rstp)
+- 802.1s - multiple spanning tree protocol (mst) 
+- 802.1x - port security 
+
+STATES OF SWITCHES - STP
+LIS - listening 15 secs (AMBER color switch)
+LRN - learning 15 secs (AMBER color switch)
+FWD - forwarding (GREEN color switch)
+
+LIPAT VLAN
+conf t
+int range f0/1-12
+switchport mode access
+switchport access vlan 1
+
+ethernet = 100 (cost)
+fast ethernet = 19 (cost)
+gigabit = 4 (cost)
+teng = 2 (cost)
+
+-----------------------------------------------------------------------
+
+user: admin
+pass: [enter]
+pass: C1sc0123
+
+config system admin
+ edit admin
+  set accprofile super_admin
+  set vdom root
+  set password C1sc0123
+  next
+ edit von
+  set accprofile super_admin
+  set vdom root
+  set password pass
+  end
+show system admin
